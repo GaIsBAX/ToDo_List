@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import create from "zustand";
-
 import { generateId } from "../helpers";
 
 interface Task {
@@ -17,11 +15,38 @@ interface ToDoStore {
 }
 
 export const useToDoStore = create<ToDoStore>((set, get) => ({
-  tasks: [],
-  createTask: (title) => {
+  tasks: [
+    {
+      id: "fff",
+      title: "дефолт",
+      createdAt: 152,
+    },
+  ],
+  createTask: (title: string) => {
     const { tasks } = get();
-    const newTask = {};
+    const newTask = {
+      id: generateId(),
+      title,
+      createdAt: Date.now(),
+    };
+
+    set({
+      tasks: [newTask].concat(tasks),
+    });
   },
-  updateTask: (id, title) => {},
-  removeTask: (id) => {},
+  updateTask: (id: string, title: string) => {
+    const { tasks } = get();
+    set({
+      tasks: tasks.map((task) => ({
+        ...task,
+        title: task.id === id ? title : task.title,
+      })),
+    });
+  },
+  removeTask: (id: string) => {
+    const { tasks } = get();
+    set({
+      tasks: tasks.filter((task) => task.id !== id),
+    });
+  },
 }));
